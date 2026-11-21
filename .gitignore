@@ -1,0 +1,18 @@
+# Jupyter
+.ipynb_checkpoints/
+
+# Datasets
+data/
+*.tar.gz
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Model checkpoints
+*.pth
+*.pt
+
+# Local original notebook
+homework_resnet18_cifar10.ipynb

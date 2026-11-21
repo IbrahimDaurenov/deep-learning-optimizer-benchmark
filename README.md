@@ -1,65 +1,161 @@
 # Deep Learning Optimizer Benchmark
 
-Comparison of SGD, Momentum, Nesterov Momentum, and Adam for training **ResNet-18 on CIFAR-10** using PyTorch.
+A comparison of four optimization methods for training **ResNet-18 on CIFAR-10** using PyTorch.
 
-## Objective
+This project investigates how different optimizers affect training convergence and the time required to reach **99% training accuracy**.
 
-Measure how much GPU training time each optimizer needs to reach **99% training accuracy** under the settings used in the experiment.
+The following optimizers are evaluated:
+- Stochastic Gradient Descent (SGD)
+- SGD with Momentum
+- SGD with Nesterov Momentum
+- Adam
 
-## Experimental setup
+## 1. Experimental Setup
 
-- **Model:** ResNet-18
-- **Dataset:** CIFAR-10
-- **Framework:** PyTorch
-- **GPU:** NVIDIA Tesla T4 (Google Colab)
-- **Batch size:** 128
-- **Loss:** Cross-entropy
-- **SGD / Momentum / Nesterov learning rate:** 0.01
-- **Momentum coefficient:** 0.9
-- **Adam learning rate:** 0.001
+Experiments were conducted using PyTorch with GPU acceleration on Google Colab.
 
-The experiment uses PyTorch's built-in optimizers, rather than custom optimizer implementations.
+| Parameter | Configuration |
+|-----------|---------------|
+| Dataset | CIFAR-10 |
+| Architecture | ResNet-18 |
+| Framework | PyTorch |
+| GPU | NVIDIA Tesla T4 |
+| Batch Size | 128 |
+| Loss Function | Cross-Entropy Loss |
+| Target Accuracy | 99% (Training) |
 
-## Results
+### Optimizer Configuration
 
-| Optimizer | Time to 99% train accuracy | Relative speed vs SGD |
-|---|---:|---:|
-| **SGD** | **594.9 s** | **1.00×** |
-| SGD + Momentum | 768.2 s | 0.77× |
-| SGD + Nesterov | 849.5 s | 0.70× |
-| Adam | 1395.2 s | 0.43× |
+| Optimizer | Learning Rate | Momentum |
+|-----------|---------------|----------|
+| SGD | 0.01 | - |
+| SGD + Momentum | 0.01 | 0.9 |
+| SGD + Nesterov | 0.01 | 0.9 |
+| Adam | 0.001 | - |
 
-All four methods achieved the 99% *training* accuracy target. With these hyperparameters, standard SGD reached the target in the shortest time. This does not imply that SGD is generally better than Momentum, Nesterov, or Adam.
+All experiments use PyTorch's built-in optimizers.
 
-### Accuracy vs time
+The main evaluation metric is the elapsed training time
+required to reach the target accuracy.
 
-![Training accuracy versus time](figures/accuracy_vs_time.png)
+## 2. Experimental Results
 
-### Loss vs time
+All four optimizers successfully reached 99% training accuracy.
 
-![Training loss versus time](figures/loss_vs_time.png)
+| Optimizer | Time to 99% (s) | Relative Speed vs SGD |
+|-----------|-----------------|-----------------------|
+| **SGD** | **594.9** | **1.00x** |
+| SGD + Momentum | 768.2 | 0.77x |
+| SGD + Nesterov | 849.5 | 0.70x |
+| Adam | 1395.2 | 0.43x |
 
-### Summary
+Under the selected hyperparameters, standard SGD reached
+the target accuracy in the shortest time.
 
-![Optimizer comparison](figures/optimizer_comparison.png)
+### Training Accuracy
 
-## Discussion
+![Training Accuracy](figures/accuracy_vs_time.png)
 
-The relative performance depends on the learning rate, optimizer configuration, model, and training setup. The comparison is based on one run per optimizer and a limited set of hyperparameters. It measures **training convergence**, not test accuracy or generalization.
+The figure compares training accuracy as a function of
+elapsed training time.
 
-## Repository contents
+### Training Loss
 
-- `homework_resnet18_cifar10.ipynb` — training and evaluation notebook
-- `results/results_all.json` — per-epoch experiment histories
-- `figures/` — comparison charts
-- `requirements.txt` — Python dependencies
+![Training Loss](figures/loss_vs_time.png)
 
-## Running the notebook
+All four optimizers successfully reduced the training loss,
+although their convergence behavior differed.
 
-Open `homework_resnet18_cifar10.ipynb` in Google Colab (GPU runtime) or in a local Jupyter environment with PyTorch. Download CIFAR-10 separately; the dataset is not included in this repository. **Update any local or Google Drive paths in the notebook** before running it. The saved JSON results and charts are provided so the reported comparison can be inspected without retraining.
+### Optimizer Comparison
 
-## Possible extensions
+![Optimizer Comparison](figures/optimizer_comparison.png)
 
-- Evaluate test accuracy and generalization.
-- Compare multiple learning rates and random seeds.
-- Implement selected optimizers from scratch and verify them against PyTorch.
+## 3. Discussion
+
+Standard SGD achieved the best time-to-target performance
+in this experiment.
+
+Momentum and Nesterov did not outperform standard SGD
+under the selected training configuration.
+
+Adam also converged successfully, but required more time
+to reach the target accuracy.
+
+These results do not imply that SGD is generally superior.
+Optimizer performance depends on several factors, including:
+
+- Learning rate selection
+- Momentum and other optimizer parameters
+- Neural network architecture
+- Dataset and training configuration
+
+The experiments were conducted with one training run per
+optimizer and a limited set of hyperparameters.
+
+Additionally, the comparison focuses on training accuracy
+rather than test accuracy. Therefore, the results should
+not be interpreted as a comparison of generalization performance.
+
+## 4. Repository Structure
+
+```text
+deep-learning-optimizer-benchmark/
+|
+|-- README.md
+|-- requirements.txt
+|-- resnet18_optimizer_benchmark.ipynb
+|
+|-- figures/
+|   |-- accuracy_vs_time.png
+|   |-- loss_vs_time.png
+|   |-- optimizer_comparison.png
+|
+|-- results/
+|   |-- results_all.json
+|
+|-- scripts/
+|-- setup/
+```
+
+The repository also contains PDF versions of the figures.
+
+## 5. Reproducing the Experiments
+
+The experiments were originally conducted in Google Colab
+using an NVIDIA Tesla T4 GPU.
+
+1. Open `resnet18_optimizer_benchmark.ipynb` in Google Colab.
+2. Enable GPU acceleration.
+3. Install the required Python packages if necessary.
+4. Download the CIFAR-10 dataset.
+5. Update the dataset and Google Drive paths in the notebook.
+6. Run the training experiments.
+
+The saved training histories are available in:
+
+`results/results_all.json`
+
+These results can be used to reproduce the plots without
+retraining all four models.
+
+**Note:** The notebook contains some Google Colab-specific
+paths that may need adjustment for other environments.
+
+## 6. Future Improvements
+
+Possible extensions include:
+
+- Implementing optimization algorithms from scratch
+- Comparing different learning rate schedules
+- Evaluating optimizer sensitivity to hyperparameters
+- Testing generalization performance
+- Studying convergence on strongly convex quadratic functions
+
+## 7. Tools
+
+Python, PyTorch, NumPy, Matplotlib, Pandas, Google Colab.
+
+---
+
+**Project focus:** Numerical Optimization, Deep Learning,
+Optimizer Benchmarking.
